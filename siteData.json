@@ -64,7 +64,12 @@
         "appendix-instructions-for-manual-testing": "Appendix: Instructions for manual testing",
         "launch-and-shutdown": "Launch and shutdown",
         "deleting-a-person": "Deleting a person",
-        "saving-data": "Saving data"
+        "saving-data": "Saving data",
+        "appendix-effort": "Appendix: Effort",
+        "project-overview": "Project Overview",
+        "difficulty-level-challenging": "Difficulty Level Challenging",
+        "effort-required": "Effort Required",
+        "effort-savings-through-reuse": "Effort Savings through Reuse"
       },
       "headingKeywords": {}
     },
