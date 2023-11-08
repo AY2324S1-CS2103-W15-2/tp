@@ -211,7 +211,14 @@
       "src": "team/nid21cs.md",
       "title": "Nidhish Krishnan's Project Portfolio Page",
       "headings": {
-        "project-profbook": "Project: ProfBook"
+        "project-profbook": "Project: ProfBook",
+        "reposense-report": "RepoSense Report",
+        "code-contributions": "Code Contributions",
+        "class-enhancements": "Class Enhancements",
+        "user-guide-contributions": "User Guide Contributions",
+        "developer-guide-contributions": "Developer Guide Contributions",
+        "team-based-task-contributions": "Team-Based Task Contributions",
+        "review-and-mentoring-contributions": "Review and Mentoring Contributions"
       },
       "headingKeywords": {}
     },
