@@ -219,7 +219,11 @@
       "src": "team/zannloo.md",
       "title": "Loo Mei Lin Zann's Project Portfolio Page",
       "headings": {
-        "project-profbook": "Project: ProfBook"
+        "project-profbook": "Project: ProfBook",
+        "code-contributions": "Code Contributions",
+        "project-management": "Project Management",
+        "documentation": "Documentation",
+        "community": "Community:"
       },
       "headingKeywords": {}
     },
