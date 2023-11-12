@@ -603,7 +603,7 @@ positioned in the top-left corner of the window.
 
 ## Student or Group Commands :family:
 
-### <span style="color: #FF8C00;">Add Student: `touch` </span>
+### <span style="color: #FF8C00;">Add a Student: `touch` </span>
 
 Adds a student into the specified group directory.
 
@@ -667,7 +667,7 @@ When you are at the group directory `~/grp-001` and would like to add the same s
 
 <div style="page-break-after: always;"></div>
 
-### <span style="color: #FF8C00;">Edit Student: `edit` </span>
+### <span style="color: #FF8C00;">Edit a Student: `edit` </span>
 
 <box type="warning">
 
@@ -722,7 +722,7 @@ directory before executing the `edit` command!
 
 <div style="page-break-after: always;"></div>
 
-### <span style="color: #FF8C00;">Edit Group: `edit` </span>
+### <span style="color: #FF8C00;">Edit a Group: `edit` </span>
 <box type="warning">
 
 The `edit` command uses the same command word, `edit`, for both editing students and groups.
@@ -826,7 +826,7 @@ in `~/grp-001`,
 
 <div style="page-break-after: always;"></div>
 
-### <span style="color: #FF8C00;">Move Student: `mv` </span>
+### <span style="color: #FF8C00;">Move a Student: `mv` </span>
 
 Moves student from one group to another group.
 
@@ -875,7 +875,7 @@ root directory,
 
 <div style="page-break-after: always;"></div>
 
-### <span style="color: #FF8C00;">Create Group : `mkdir`</span>
+### <span style="color: #FF8C00;">Create a Group : `mkdir`</span>
 
 Creates a group in the root directory that can contain students.
 
@@ -993,7 +993,7 @@ following command at the root directory, `~/`,
 
 <div style="page-break-after: always;"></div>
 
-### <span style="color: #FF8C00;">Create Deadline task : `deadline` </span>
+### <span style="color: #FF8C00;">Create Deadline Task : `deadline` </span>
 
 Creates task with a deadline for specific student(s) or group(s).
 
@@ -1047,7 +1047,7 @@ you could use the following command at the root directory, `~/`,
 
 </box>
 
-### <span style="color: #FF8C00;">Mark task as completed: `mark` </span>
+### <span style="color: #FF8C00;">Mark Task as Completed: `mark` </span>
 
 Marks the specified task as done for the specified student or group. 
 
@@ -1097,7 +1097,7 @@ after you mark the task.
 
 <div style="page-break-after: always;"></div>
 
-### <span style="color: #FF8C00;">Unmark task: `unmark` </span>
+### <span style="color: #FF8C00;">Unmark Task: `unmark` </span>
 
 Unmarks the specified task for the student or group. 
 
@@ -1141,7 +1141,7 @@ you should observe an **absence of the tick** after executing the `unmark` comma
 
 <div style="page-break-after: always;"></div>
 
-### <span style="color: #FF8C00;">Delete task: `rmt` </span>
+### <span style="color: #FF8C00;">Delete Task: `rmt` </span>
 
 Removes a task according to the task index.
 
