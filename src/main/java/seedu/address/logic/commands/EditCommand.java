@@ -3,7 +3,6 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Map;
-import java.util.Optional;
 
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
@@ -156,15 +155,6 @@ public class EditCommand extends Command {
 
         GroupId groupId = target.getGroupId().get();
 
-        // Check if Id is edited, if is edited check whether new id has already been used.
-        Optional<GroupId> editedId = editGroupDescriptor.getId();
-        boolean isEdited = editedId.isPresent() && (!editedId.get().equals(groupId));
-        if (isEdited && model.hasGroupWithId(editedId.get())) {
-            Group groupWithSameId = model.getGroupWithId(editedId.get());
-            throw new CommandException(String.format(
-                MESSAGE_DUPLICATE_GROUP_ID, editedId.get(), Messages.format(groupWithSameId)));
-        }
-
         ChildOperation<Group> rootOperation = model.rootChildOperation();
         Group groupToEdit = rootOperation.getChild(groupId);
         Group editedGroup = createEditedGroup(groupToEdit, this.editGroupDescriptor);
@@ -172,6 +162,14 @@ public class EditCommand extends Command {
         // Check whether group is actually edited
         if (editedGroup.equals(groupToEdit)) {
             throw new CommandException(MESSAGE_NO_CHANGES_MADE);
+        }
+
+        // Check if Id is edited, if is edited check whether new id has already been used.
+        boolean idIsEdited = !editedGroup.getId().equals(groupId);
+        if (idIsEdited && model.hasGroupWithId(editedGroup.getId())) {
+            Group groupWithSameId = model.getGroupWithId(editedGroup.getId());
+            throw new CommandException(String.format(
+                MESSAGE_DUPLICATE_GROUP_ID, editedGroup.getId(), Messages.format(groupWithSameId)));
         }
 
         rootOperation.deleteChild(groupId);
@@ -199,15 +197,6 @@ public class EditCommand extends Command {
 
         StudentId studentId = target.getStudentId().get();
 
-        // Check if Id is edited, if is edited check whether new id has already been used.
-        Optional<StudentId> editedId = editStudentDescriptor.getId();
-        boolean isEdited = editedId.isPresent() && (!editedId.get().equals(studentId));
-        if (isEdited && model.hasStudentWithId(editedId.get())) {
-            Student studentWithSameId = model.getStudentWithId(editedId.get());
-            throw new CommandException(String.format(
-                MESSAGE_DUPLICATE_STUDENT_ID, editedId.get(), Messages.format(studentWithSameId)));
-        }
-
         ChildOperation<Student> groupOperation = model.groupChildOperation(target);
         Student studentToEdit = groupOperation.getChild(studentId);
         Student editedStudent = createEditedStudent(studentToEdit, this.editStudentDescriptor);
@@ -215,6 +204,14 @@ public class EditCommand extends Command {
         // Check whether student is actually edited
         if (editedStudent.equals(studentToEdit)) {
             throw new CommandException(MESSAGE_NO_CHANGES_MADE);
+        }
+
+        // Check if Id is edited, if is edited check whether new id has already been used.
+        boolean idIsEdited = !editedStudent.getId().equals(studentId);
+        if (idIsEdited && model.hasStudentWithId(editedStudent.getId())) {
+            Student studentWithSameId = model.getStudentWithId(editedStudent.getId());
+            throw new CommandException(String.format(
+                MESSAGE_DUPLICATE_STUDENT_ID, editedStudent.getId(), Messages.format(studentWithSameId)));
         }
 
         groupOperation.deleteChild(studentId);

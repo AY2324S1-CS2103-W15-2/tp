@@ -113,7 +113,8 @@ class CreateDeadlineCommandTest {
     }
 
     @Test
-    public void execute_childrenAlreadyHaveTaskForAllStuFromGroup_throwsCommandException() throws InvalidPathException {
+    public void execute_childrenAlreadyHaveTaskForAllStuFromGroup_throwsCommandException()
+            throws InvalidPathException {
         // Test the case where the path doesn't exist
         AbsolutePath target = new AbsolutePath("~/grp-001");
         String expectedMessage = MESSAGE_ALL_CHILDREN_HAVE_TASK;
@@ -124,7 +125,8 @@ class CreateDeadlineCommandTest {
     }
 
     @Test
-    public void execute_childrenAlreadyHaveTaskForAllStuFromRoot_throwsCommandException() throws InvalidPathException {
+    public void execute_childrenAlreadyHaveTaskForAllStuFromRoot_throwsCommandException()
+            throws InvalidPathException {
         // Test the case where the path doesn't exist
         AbsolutePath target = new AbsolutePath("~");
         String expectedMessage = MESSAGE_ALL_CHILDREN_HAVE_TASK;
@@ -135,7 +137,8 @@ class CreateDeadlineCommandTest {
     }
 
     @Test
-    public void execute_childrenAlreadyHaveTaskForAllGrpFromRoot_throwsCommandException() throws InvalidPathException {
+    public void execute_childrenAlreadyHaveTaskForAllGrpFromRoot_throwsCommandException()
+            throws InvalidPathException {
         // Test the case where the path doesn't exist
         AbsolutePath target = new AbsolutePath("~");
         String expectedMessage = CreateTodoCommand.MESSAGE_ALL_CHILDREN_HAVE_TASK;
@@ -146,7 +149,7 @@ class CreateDeadlineCommandTest {
     }
 
     @Test
-    public void execute_deadlineForStudentAccepted_addSuccessful() throws InvalidPathException, CommandException {
+    public void execute_deadlineForStudentAccepted_addSuccessful() throws InvalidPathException {
         Student alice = TypicalStudents.ALICE;
         Group aliceGroup = TypicalGroups.GROUP_ONE;
 
@@ -167,8 +170,7 @@ class CreateDeadlineCommandTest {
     }
 
     @Test
-    public void execute_deadlineForAllStudentsInGroupAccepted_addSuccessful()
-            throws InvalidPathException, CommandException {
+    public void execute_deadlineForAllStudentsInGroupAccepted_addSuccessful() throws InvalidPathException {
         Group targetGroup = TypicalGroups.GROUP_ONE;
 
         RelativePath groupPath = new RelativePath(targetGroup.getId().toString());
@@ -231,7 +233,7 @@ class CreateDeadlineCommandTest {
     }
 
     @Test
-    public void execute_pathNotExists_throwCommandException() throws CommandException, InvalidPathException {
+    public void execute_pathNotExists_throwCommandException() throws InvalidPathException {
         AbsolutePath absoluteTargetPath = new AbsolutePath("~/grp-003/0000A");
 
         CreateDeadlineCommand command = new CreateDeadlineCommand(absoluteTargetPath, toBeAdded, Category.NONE);

@@ -116,7 +116,8 @@ public class CreateTodoCommandTest {
     }
 
     @Test
-    public void execute_childrenAlreadyHaveTaskForAllStuFromGroup_throwsCommandException() throws InvalidPathException {
+    public void execute_childrenAlreadyHaveTaskForAllStuFromGroup_throwsCommandException()
+            throws InvalidPathException {
         // Test the case where the path doesn't exist
         AbsolutePath target = new AbsolutePath("~/grp-001");
         String expectedMessage = MESSAGE_ALL_CHILDREN_HAVE_TASK;
@@ -127,7 +128,8 @@ public class CreateTodoCommandTest {
     }
 
     @Test
-    public void execute_childrenAlreadyHaveTaskForAllStuFromRoot_throwsCommandException() throws InvalidPathException {
+    public void execute_childrenAlreadyHaveTaskForAllStuFromRoot_throwsCommandException()
+            throws InvalidPathException {
         // Test the case where the path doesn't exist
         AbsolutePath target = new AbsolutePath("~/grp-001");
         String expectedMessage = MESSAGE_ALL_CHILDREN_HAVE_TASK;

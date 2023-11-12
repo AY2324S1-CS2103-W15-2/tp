@@ -58,7 +58,7 @@ class CreateStudentCommandTest {
     }
 
     @Test
-    void execute_studentAcceptedByGroup_success() throws Exception {
+    void execute_studentAcceptedByGroup_success() {
         ChildOperation<Student> operation = expectedModel.groupChildOperation(targetAbsolutePath);
         operation.addChild(toBeAdded.getId(), toBeAdded);
 
@@ -69,7 +69,7 @@ class CreateStudentCommandTest {
     }
 
     @Test
-    public void execute_duplicateStudent_throwsCommandException() throws InvalidPathException {
+    public void execute_duplicateStudent_throwsCommandException() {
         ChildOperation<Student> operation = model.groupChildOperation(targetAbsolutePath);
         operation.addChild(toBeAdded.getId(), toBeAdded);
 

@@ -1,5 +1,6 @@
 package seedu.address.logic.commands;
 
+import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 import static seedu.address.logic.Messages.MESSAGE_PATH_NOT_FOUND;
 
@@ -80,7 +81,7 @@ public class CreateDeadlineCommand extends Command {
         public CommandResult execute(Model model) throws CommandException {
             return new CommandResult(MESSAGE_USAGE);
         }
-    };;
+    };
 
     private final AbsolutePath path;
 
@@ -89,8 +90,9 @@ public class CreateDeadlineCommand extends Command {
     private final Category category;
 
     /**
-     * Creates an CreateDeadlineCommand to add the Deadline Task for a specified {@code Student} or {@code Group}
-     * User has input a category as well.
+     * Creates an CreateDeadlineCommand to add the {@code Deadline} Task for a specified {@code Student}
+     * or {@code Group}
+     * User has inputted a category as well.
      */
     public CreateDeadlineCommand(AbsolutePath path, Deadline deadline, Category category) {
         requireAllNonNull(path, deadline, category);
@@ -113,8 +115,10 @@ public class CreateDeadlineCommand extends Command {
      */
     @Override
     public CommandResult execute(Model model) throws CommandException {
+        requireNonNull(model);
+        assert model != null : "Model should not be null";
 
-        // Check path exists in ProfBook
+        // Check if path exists in ProfBook
         if (!model.hasPath(path)) {
             throw new CommandException(String.format(MESSAGE_PATH_NOT_FOUND, path));
         }
@@ -129,6 +133,12 @@ public class CreateDeadlineCommand extends Command {
         }
     }
 
+    /**
+     * Allocates a {@code Deadline} task to a {@code Group} or {@code Student}
+     *
+     * @return Command result which represents the outcome of the command execution.
+     * @throws CommandException Exception thrown when error occurs during command execution.
+     */
     private CommandResult handleNone(Model model) throws CommandException {
         // Check if target path is root
         if (path.isRootDirectory()) {
@@ -151,32 +161,59 @@ public class CreateDeadlineCommand extends Command {
         return new CommandResult(String.format(MESSAGE_SUCCESS_STUDENT, path.getStudentId().get(), this.deadline));
     }
 
+    /**
+     * Handles the situation where a {@code Deadline} task is allocated to all {@code Student}
+     * or {@code Root}
+     *
+     * @return Command result which represents the outcome of the command execution.
+     * @throws CommandException Exception thrown when error occurs during command execution.
+     */
     private CommandResult handleAllStu(Model model) throws CommandException {
         if (path.isStudentDirectory()) {
             throw new CommandException(MESSAGE_INVALID_PATH_FOR_ALL_STU);
         }
 
         if (path.isGroupDirectory()) {
-            ChildOperation<Student> groupOper = model.groupChildOperation(path);
-
-            // Check whether all children already have the task
-            if (groupOper.checkIfAllChildrenHaveTask(deadline, 1)) {
-                throw new CommandException(String.format(MESSAGE_ALL_CHILDREN_HAVE_TASK, "student"));
-            }
-
-            // Check whether at least one of the children has the task
-            boolean warning = false;
-            if (groupOper.checkIfAnyChildHasTask(deadline, 1)) {
-                warning = true;
-            }
-
-            groupOper.addTaskToAllChildren(deadline, 1);
-            model.updateList();
-            return new CommandResult(
-                    warning ? MESSAGE_SUCCESS_ALL_STUDENTS_WITH_WARNING
-                            : String.format(MESSAGE_SUCCESS_ALL_STUDENTS, path.getGroupId().get()));
+            return addTaskToAllStuInGrp(model);
         }
 
+        return addTaskToAllStuInRoot(model);
+    }
+
+    /**
+     * Adds a {@code Deadline} task to all {@code Student} in a {@code Group}
+     *
+     * @return Command result which represents the outcome of the command execution.
+     * @throws CommandException Exception thrown when error occurs during command execution.
+     */
+    private CommandResult addTaskToAllStuInGrp(Model model) throws CommandException {
+        ChildOperation<Student> groupOper = model.groupChildOperation(path);
+
+        // Check whether all children already have the task
+        if (groupOper.checkIfAllChildrenHaveTask(deadline, 1)) {
+            throw new CommandException(String.format(MESSAGE_ALL_CHILDREN_HAVE_TASK, "student"));
+        }
+
+        // Check whether at least one of the children has the task
+        boolean warning = false;
+        if (groupOper.checkIfAnyChildHasTask(deadline, 1)) {
+            warning = true;
+        }
+
+        groupOper.addTaskToAllChildren(deadline, 1);
+        model.updateList();
+        return new CommandResult(
+                warning ? MESSAGE_SUCCESS_ALL_STUDENTS_WITH_WARNING
+                        : String.format(MESSAGE_SUCCESS_ALL_STUDENTS, path.getGroupId().get()));
+    }
+
+    /**
+     * Adds a {@code Deadline} task to all {@code Student} in a {@code Root}
+     *
+     * @return Command result which represents the outcome of the command execution.
+     * @throws CommandException Exception thrown when error occurs during command execution.
+     */
+    private CommandResult addTaskToAllStuInRoot(Model model) throws CommandException {
         ChildOperation<Group> operation = model.rootChildOperation();
 
         // Check whether all children already have the task
@@ -197,11 +234,27 @@ public class CreateDeadlineCommand extends Command {
                         : MESSAGE_SUCCESS_ALL_STUDENTS_FOR_ROOT);
     }
 
+    /**
+     * Handles the situation where a {@code Deadline} task is allocated to all {@code Group} in {@code Root}
+     *
+     * @return Command result which represents the outcome of the command execution.
+     * @throws CommandException Exception thrown when error occurs during command execution.
+     */
     private CommandResult handleAllGrp(Model model) throws CommandException {
         if (!path.isRootDirectory()) {
             throw new CommandException(MESSAGE_INVALID_PATH_FOR_ALL_GROUP);
         }
 
+        return addTaskToAllGrpInRoot(model);
+    }
+
+    /**
+     * Adds a {@code Deadline} task to all {@code Group} in {@code Root}
+     *
+     * @return Command result which represents the outcome of the command execution.
+     * @throws CommandException Exception thrown when error occurs during command execution.
+     */
+    private CommandResult addTaskToAllGrpInRoot(Model model) throws CommandException {
         ChildOperation<Group> rootOper = model.rootChildOperation();
 
         // Check whether all children already have the task
@@ -221,7 +274,7 @@ public class CreateDeadlineCommand extends Command {
     }
 
     /**
-     * Compares this {@code CreateDeadlineCommand} to another {@code CreateDeadlineCommand} to see if they are equal.
+     * Compares this {@code CreateDeadlineCommand} to another object to see if they are equal.
      *
      * @param other The other object to compare against this {@code CreateDeadlineCommand}.
      * @return True if the object is same as {@code CreateDeadlineCommand} and false otherwise.
