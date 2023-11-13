@@ -5,7 +5,7 @@ with(this){return _c('div',{attrs:{"id":"app"}},[_c('header',{attrs:{"sticky":""
 };
     var pageVueStaticRenderFns = [function anonymous(
 ) {
-with(this){return _c('h3',{attrs:{"id":"project-profbook"}},[_v("Project: ProfBook"),_c('a',{staticClass:"fa fa-anchor",attrs:{"href":"#project-profbook","onclick":"event.stopPropagation()"}})])}
+with(this){return _c('h2',{attrs:{"id":"project-profbook"}},[_v("Project: ProfBook"),_c('a',{staticClass:"fa fa-anchor",attrs:{"href":"#project-profbook","onclick":"event.stopPropagation()"}})])}
 },function anonymous(
 ) {
 with(this){return _c('p',[_c('strong',[_v("Code contributed")]),_v(":\nClick "),_c('a',{attrs:{"href":"https://nus-cs2103-ay2324s1.github.io/tp-dashboard/?search=zannloo&breakdown=false&sort=groupTitle%20dsc&sortWithin=title&since=2023-09-22&timeframe=commit&mergegroup=&groupSelect=groupByRepos&tabOpen=true&tabType=authorship&tabAuthor=zannloo&tabRepo=AY2324S1-CS2103T-W15-2%2Ftp%5Bmaster%5D&authorshipIsMergeGroup=false&authorshipFileTypes=functional-code~test-code&authorshipIsBinaryFileTypeChecked=false&authorshipIsIgnoredFilesChecked=false"}},[_v("here")]),_v(" to my RepoSense Report.")])}
@@ -44,6 +44,6 @@ with(this){return _c('h3',{attrs:{"id":"community"}},[_v("Community:"),_c('a',{s
 with(this){return _c('ul',[_c('li',[_v("Here are some PRs I reviewed (with non-trivial review comments):\n"),_c('ul',[_c('li',[_c('strong',[_c('a',{attrs:{"href":"https://github.com/AY2324S1-CS2103T-W15-2/tp/pull/136"}},[_v("Pull Request #136")])])]),_v(" "),_c('li',[_c('strong',[_c('a',{attrs:{"href":"https://github.com/AY2324S1-CS2103T-W15-2/tp/pull/180"}},[_v("Pull Request #180")])])]),_v(" "),_c('li',[_c('strong',[_c('a',{attrs:{"href":"https://github.com/AY2324S1-CS2103T-W15-2/tp/pull/289"}},[_v("Pull Request #289")])])]),_v(" "),_c('li',[_c('strong',[_c('a',{attrs:{"href":"https://github.com/AY2324S1-CS2103T-W15-2/tp/pull/294"}},[_v("Pull Request #294")])])]),_v(" "),_c('li',[_c('strong',[_c('a',{attrs:{"href":"https://github.com/AY2324S1-CS2103T-W15-2/tp/pull/295"}},[_v("Pull Request #295")])])])])]),_v(" "),_c('li',[_v("Contribution to forum discussions:\n"),_c('ul',[_c('li',[_c('a',{attrs:{"href":"https://github.com/nus-cs2103-AY2324S1/forum/issues/225"}},[_v("Actively helped the author of the issue to test out the different suggestions given. (However, I did not comment on the issue directly.)")])])])])])}
 },function anonymous(
 ) {
-with(this){return _c('footer',[_c('div',{staticClass:"text-center"},[_c('small',[_v("["),_c('span',[_c('strong',[_v("Powered by")])]),_v(" "),_c('img',{attrs:{"src":"https://markbind.org/favicon.ico","width":"30"}}),_v(" "),_c('a',{attrs:{"href":"https://markbind.org/"}},[_v("MarkBind 5.1.0")]),_v(", generated on Mon, 13 Nov 2023, 19:54:36 GMT+8]")])])])}
+with(this){return _c('footer',[_c('div',{staticClass:"text-center"},[_c('small',[_v("["),_c('span',[_c('strong',[_v("Powered by")])]),_v(" "),_c('img',{attrs:{"src":"https://markbind.org/favicon.ico","width":"30"}}),_v(" "),_c('a',{attrs:{"href":"https://markbind.org/"}},[_v("MarkBind 5.1.0")]),_v(", generated on Mon, 13 Nov 2023, 19:57:58 GMT+8]")])])])}
 }];
   
