@@ -2,8 +2,6 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Map;
-
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -12,19 +10,12 @@ import seedu.address.model.Model;
 import seedu.address.model.field.EditGroupDescriptor;
 import seedu.address.model.field.EditStudentDescriptor;
 import seedu.address.model.id.GroupId;
-import seedu.address.model.id.Id;
 import seedu.address.model.id.StudentId;
 import seedu.address.model.path.AbsolutePath;
 import seedu.address.model.path.RelativePath;
 import seedu.address.model.path.exceptions.InvalidPathException;
-import seedu.address.model.profbook.Address;
-import seedu.address.model.profbook.Email;
 import seedu.address.model.profbook.Group;
-import seedu.address.model.profbook.Name;
-import seedu.address.model.profbook.Phone;
 import seedu.address.model.profbook.Student;
-import seedu.address.model.task.ReadOnlyTaskList;
-import seedu.address.model.task.TaskListManager;
 
 /**
  * EditCommand is a class representing a command to edit the details of a person (either a student or a group) in
@@ -156,11 +147,10 @@ public class EditCommand extends Command {
         GroupId groupId = target.getGroupId().get();
 
         ChildOperation<Group> rootOperation = model.rootChildOperation();
-        Group groupToEdit = rootOperation.getChild(groupId);
-        Group editedGroup = createEditedGroup(groupToEdit, this.editGroupDescriptor);
+        Group editedGroup = rootOperation.editChild(groupId, editGroupDescriptor);
 
         // Check whether group is actually edited
-        if (editedGroup.equals(groupToEdit)) {
+        if (editedGroup.equals(rootOperation.getChild(groupId))) {
             throw new CommandException(MESSAGE_NO_CHANGES_MADE);
         }
 
@@ -172,8 +162,7 @@ public class EditCommand extends Command {
                 MESSAGE_DUPLICATE_GROUP_ID, editedGroup.getId(), Messages.format(groupWithSameId)));
         }
 
-        rootOperation.deleteChild(groupId);
-        rootOperation.addChild(editedGroup.getId(), editedGroup);
+        rootOperation.updateChild(groupId, editedGroup);
 
         // If edited group is current path, need to redirect with new Id.
         if (target.equals(model.getCurrPath())) {
@@ -198,11 +187,10 @@ public class EditCommand extends Command {
         StudentId studentId = target.getStudentId().get();
 
         ChildOperation<Student> groupOperation = model.groupChildOperation(target);
-        Student studentToEdit = groupOperation.getChild(studentId);
-        Student editedStudent = createEditedStudent(studentToEdit, this.editStudentDescriptor);
+        Student editedStudent = groupOperation.editChild(studentId, editStudentDescriptor);
 
         // Check whether student is actually edited
-        if (editedStudent.equals(studentToEdit)) {
+        if (editedStudent.equals(groupOperation.getChild(studentId))) {
             throw new CommandException(MESSAGE_NO_CHANGES_MADE);
         }
 
@@ -214,42 +202,12 @@ public class EditCommand extends Command {
                 MESSAGE_DUPLICATE_STUDENT_ID, editedStudent.getId(), Messages.format(studentWithSameId)));
         }
 
-        groupOperation.deleteChild(studentId);
-        groupOperation.addChild(editedStudent.getId(), editedStudent);
+        groupOperation.updateChild(studentId, editedStudent);
 
         model.updateList();
 
         return new CommandResult(MESSAGE_EDIT_STUDENT_SUCCESS);
     }
-
-    /**
-     * Creates and returns a {@code Student} with the details of {@code studentToEdit}
-     * edited with {@code editStudentDescriptor}.
-     */
-    private static Student createEditedStudent(Student studentToEdit, EditStudentDescriptor editStudentDescriptor) {
-        assert studentToEdit != null;
-        Name updatedName = editStudentDescriptor.getName().orElse(studentToEdit.getName());
-        Phone updatedPhone = editStudentDescriptor.getPhone().orElse(studentToEdit.getPhone());
-        Email updatedEmail = editStudentDescriptor.getEmail().orElse(studentToEdit.getEmail());
-        Address updatedAddress = editStudentDescriptor.getAddress().orElse(studentToEdit.getAddress());
-        StudentId updatedId = editStudentDescriptor.getId().orElse(studentToEdit.getId());
-        ReadOnlyTaskList taskList = new TaskListManager(studentToEdit.getAllTasks());
-        return new Student(taskList, updatedName, updatedEmail, updatedPhone, updatedAddress, updatedId);
-    }
-
-    /**
-     * Creates and returns a {@code Group} with the details of {@code groupToEdit}
-     * edited with {@code editGroupDescriptor}.
-     */
-    private static Group createEditedGroup(Group groupToEdit, EditGroupDescriptor editGroupDescriptor) {
-        assert groupToEdit != null;
-        Name updatedName = editGroupDescriptor.getName().orElse(groupToEdit.getName());
-        GroupId updatedId = editGroupDescriptor.getId().orElse(groupToEdit.getId());
-        ReadOnlyTaskList taskList = new TaskListManager(groupToEdit.getAllTasks());
-        Map<Id, Student> students = groupToEdit.getChildren();
-        return new Group(taskList, students, updatedName, updatedId);
-    }
-
 
     /**
      * Checks if this EditCommand is equal to another object.

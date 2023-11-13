@@ -30,8 +30,8 @@ public class CreateDeadlineCommand extends Command {
             + "    -d, --desc           Description of the deadline task\n"
             + "    -dt, --datetime      Deadline of the task\n"
             + "                         Format: yyyy-MM-dd HH:mm\n"
-            + "                         \'yyyy\': year, \'MM\': month, 'dd\': day,\n"
-            + "                         \'HH\': hour (24-hour format), 'mm\': minutes.\n"
+            + "                         'yyyy': year, 'MM': month, 'dd': day,\n"
+            + "                         'HH': hour (24-hour format), 'mm': minutes.\n"
             + "\n"
             + "Option: \n"
             + "    path                 Valid path to group or student\n"
@@ -78,7 +78,7 @@ public class CreateDeadlineCommand extends Command {
 
     public static final CreateDeadlineCommand HELP_MESSAGE = new CreateDeadlineCommand() {
         @Override
-        public CommandResult execute(Model model) throws CommandException {
+        public CommandResult execute(Model model) {
             return new CommandResult(MESSAGE_USAGE);
         }
     };
@@ -190,15 +190,12 @@ public class CreateDeadlineCommand extends Command {
         ChildOperation<Student> groupOper = model.groupChildOperation(path);
 
         // Check whether all children already have the task
-        if (groupOper.checkIfAllChildrenHaveTask(deadline, 1)) {
+        if (groupOper.doAllChildrenHaveTasks(deadline, 1)) {
             throw new CommandException(String.format(MESSAGE_ALL_CHILDREN_HAVE_TASK, "student"));
         }
 
         // Check whether at least one of the children has the task
-        boolean warning = false;
-        if (groupOper.checkIfAnyChildHasTask(deadline, 1)) {
-            warning = true;
-        }
+        boolean warning = groupOper.doAnyChildrenHaveTasks(deadline, 1);
 
         groupOper.addTaskToAllChildren(deadline, 1);
         model.updateList();
@@ -217,15 +214,12 @@ public class CreateDeadlineCommand extends Command {
         ChildOperation<Group> operation = model.rootChildOperation();
 
         // Check whether all children already have the task
-        if (operation.checkIfAllChildrenHaveTask(deadline, 2)) {
+        if (operation.doAllChildrenHaveTasks(deadline, 2)) {
             throw new CommandException(String.format(MESSAGE_ALL_CHILDREN_HAVE_TASK, "student"));
         }
 
         // Check whether at least one of the children has the task
-        boolean warning = false;
-        if (operation.checkIfAnyChildHasTask(deadline, 2)) {
-            warning = true;
-        }
+        boolean warning = operation.doAnyChildrenHaveTasks(deadline, 2);
 
         operation.addTaskToAllChildren(deadline, 2);
         model.updateList();
@@ -258,15 +252,12 @@ public class CreateDeadlineCommand extends Command {
         ChildOperation<Group> rootOper = model.rootChildOperation();
 
         // Check whether all children already have the task
-        if (rootOper.checkIfAllChildrenHaveTask(deadline, 1)) {
+        if (rootOper.doAllChildrenHaveTasks(deadline, 1)) {
             throw new CommandException(String.format(MESSAGE_ALL_CHILDREN_HAVE_TASK, "group"));
         }
 
         // Check whether at least one of the children has the task
-        boolean warning = false;
-        if (rootOper.checkIfAnyChildHasTask(deadline, 1)) {
-            warning = true;
-        }
+        boolean warning = rootOper.doAnyChildrenHaveTasks(deadline, 1);
 
         rootOper.addTaskToAllChildren(deadline, 1);
         model.updateList();

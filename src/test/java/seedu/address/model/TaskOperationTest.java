@@ -2,6 +2,7 @@ package seedu.address.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -58,6 +59,7 @@ public class TaskOperationTest {
                 .withPhone("98765432")
                 .withAddress("311, Clementi Ave 2, #02-25")
                 .withId("0001Y").build();
+
         Map<Id, Student> studentMap = new HashMap<>();
         studentMap.put(new StudentId("0001Y"), this.student);
         this.group = new Group(new TaskListManager(), studentMap, new Name("gary"), new GroupId("grp-001"));
@@ -90,7 +92,6 @@ public class TaskOperationTest {
         } catch (NoSuchTaskException e) {
             fail();
         }
-        //assertFalse(this.student.contains(task));
     }
 
     @Test
@@ -140,13 +141,13 @@ public class TaskOperationTest {
     public void equals_sameTaskOperations_returnsTrue() {
         TaskOperation opr1 = model.taskOperation(stuPath);
         TaskOperation opr2 = model.taskOperation(stuPath);
-        assertTrue(opr1.equals(opr2));
+        assertEquals(opr1, opr2);
     }
 
     @Test
     public void equals_nullTaskOperations_returnsFalse() {
         TaskOperation opr1 = model.taskOperation(stuPath);
-        assertFalse(opr1.equals(null));
+        assertNotEquals(null, opr1);
     }
 
     @Test

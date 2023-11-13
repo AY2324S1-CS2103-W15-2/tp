@@ -16,39 +16,43 @@ import seedu.address.model.task.exceptions.NoSuchTaskException;
 /**
  * A child element that is both children and task list Manager.
  */
-public abstract class ChildrenAndTaskListManager<R, T extends IChildElement<T>>
-        implements IChildElement<R>, IChildrenManager<T>, ITaskListManager {
-    private ChildrenManager<T> childrenManager;
-    private TaskListManager taskListManager;
+public abstract class ChildAndTaskListManager<R, T extends IChildElement<T>>
+        implements IChildElement<R>, IChildManager<T>, ITaskListManager {
+    private final ChildManager<T> childrenManager;
+    private final TaskListManager taskListManager;
 
     /**
-     * Constructs a new {@code ChildrenAndTaskListManager}.
+     * Constructs a {@code ChildAndTaskListManager} with the data in {@code toBeCopied}.
+     *
+     * @param toBeCopied - data from storage
      */
-    public ChildrenAndTaskListManager() {
-        childrenManager = new ChildrenManager<>();
-        taskListManager = new TaskListManager();
+    public ChildAndTaskListManager(ChildAndTaskListManager<R, T> toBeCopied) {
+        this.childrenManager = new ChildManager<>(toBeCopied.childrenManager);
+        this.taskListManager = new TaskListManager(toBeCopied.taskListManager);
     }
 
     /**
-     * Constructs a new {@code ChildrenAndTaskListManager} with given children and tasklist.
+     * Constructs a new {@code ChildAndTaskListManager} with given children and task list.
+     *
+     * @param children - Map of current children this directory have
+     * @param taskList - Arraylist of tasks assigned to this directory
      */
-    public ChildrenAndTaskListManager(Map<Id, T> children, ReadOnlyTaskList taskList) {
-        childrenManager = new ChildrenManager<>(children);
+    public ChildAndTaskListManager(Map<Id, T> children, ReadOnlyTaskList taskList) {
+        childrenManager = new ChildManager<>(children);
         taskListManager = new TaskListManager(taskList.getAllTasks());
     }
 
     /**
-     * Construcst a {@code ChildrenAndTaskListManager} with the data in {@code toBeCopied}.
+     * Constructs a new {@code ChildAndTaskListManager}.
      */
-    public ChildrenAndTaskListManager(ChildrenAndTaskListManager<R, T> toBeCopied) {
-        this.childrenManager = new ChildrenManager<>(toBeCopied.childrenManager);
-        this.taskListManager = new TaskListManager(toBeCopied.taskListManager);
+    public ChildAndTaskListManager() {
+        this.childrenManager = new ChildManager<>();
+        this.taskListManager = new TaskListManager();
     }
 
-    public ChildrenManager<T> getChildrenManger() {
-        return childrenManager;
-    }
-
+    /**
+     * Returns the current task list Manager
+     */
     public TaskListManager getTaskListManager() {
         return taskListManager;
     }
@@ -57,101 +61,101 @@ public abstract class ChildrenAndTaskListManager<R, T extends IChildElement<T>>
 
     @Override
     public void addChild(Id id, T child) throws DuplicateChildException {
-        childrenManager.addChild(id, child);
+        this.childrenManager.addChild(id, child);
     }
 
     @Override
     public T deleteChild(Id id) throws NoSuchChildException {
-        return childrenManager.deleteChild(id);
+        return this.childrenManager.deleteChild(id);
     }
 
     @Override
     public boolean hasChild(Id id) {
-        return childrenManager.hasChild(id);
+        return this.childrenManager.hasChild(id);
     }
 
     @Override
     public T getChild(Id id) throws NoSuchChildException {
-        return childrenManager.getChild(id);
+        return this.childrenManager.getChild(id);
     }
 
     @Override
     public int numOfChildren() {
-        return childrenManager.numOfChildren();
+        return this.childrenManager.numOfChildren();
     }
 
     @Override
     public List<T> getAllChildren() {
-        return childrenManager.getAllChildren();
+        return this.childrenManager.getAllChildren();
     }
 
     @Override
     public Map<Id, T> getChildren() {
-        return childrenManager.getChildren();
+        return this.childrenManager.getChildren();
     }
 
     //=========== TaskList Manager ==================================================================================
 
     @Override
     public void addTask(Task t) {
-        taskListManager.addTask(t);
+        this.taskListManager.addTask(t);
     }
 
     @Override
     public Task deleteTask(int index) throws NoSuchTaskException {
-        return taskListManager.deleteTask(index);
+        return this.taskListManager.deleteTask(index);
     }
 
     @Override
     public Task markTask(int index) throws NoSuchTaskException {
-        return taskListManager.markTask(index);
+        return this.taskListManager.markTask(index);
     }
 
     @Override
     public Task unmarkTask(int index) throws NoSuchTaskException {
-        return taskListManager.unmarkTask(index);
+        return this.taskListManager.unmarkTask(index);
     }
 
     @Override
     public List<Task> findTask(String query) throws NoSuchTaskException {
-        return taskListManager.findTask(query);
+        return this.taskListManager.findTask(query);
     }
 
     @Override
     public boolean isValidIndex(int index) {
-        return taskListManager.isValidIndex(index);
+        return this.taskListManager.isValidIndex(index);
     }
 
     @Override
     public int size() {
-        return taskListManager.size();
+        return this.taskListManager.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return taskListManager.isEmpty();
+        return this.taskListManager.isEmpty();
     }
 
     @Override
     public Task getTask(int index) throws NoSuchTaskException {
-        return taskListManager.getTask(index);
+        return this.taskListManager.getTask(index);
     }
 
     @Override
     public boolean contains(Task t) {
-        return taskListManager.contains(t);
+        return this.taskListManager.contains(t);
     }
 
     @Override
     public List<Task> getAllTasks() {
-        return taskListManager.getAllTasks();
+        return this.taskListManager.getAllTasks();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .add("Task List", taskListManager)
-                .add("Children List", childrenManager)
+                .add("Task List", this.taskListManager)
+                .add("Children List", this.childrenManager)
                 .toString();
     }
 
@@ -162,11 +166,11 @@ public abstract class ChildrenAndTaskListManager<R, T extends IChildElement<T>>
         }
 
         // instanceof handles nulls
-        if (!(other instanceof ChildrenAndTaskListManager<?, ?>)) {
+        if (!(other instanceof ChildAndTaskListManager<?, ?>)) {
             return false;
         }
 
-        ChildrenAndTaskListManager<?, ?> otherChildrenAndTaskListManager = (ChildrenAndTaskListManager<?, ?>) other;
+        ChildAndTaskListManager<?, ?> otherChildrenAndTaskListManager = (ChildAndTaskListManager<?, ?>) other;
         return this.childrenManager.equals(otherChildrenAndTaskListManager.childrenManager)
                 && this.taskListManager.equals(otherChildrenAndTaskListManager.taskListManager);
     }

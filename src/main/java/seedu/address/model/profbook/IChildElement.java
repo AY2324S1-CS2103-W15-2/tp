@@ -9,14 +9,15 @@ import seedu.address.ui.Displayable;
 public interface IChildElement<T> extends Displayable, Comparable<T> {
 
     /**
-     * Creates a clone of the current element, this is to achieve immutability.
+     * Returns the unique id of the child.
+     */
+    Id getId();
+
+    /**
+     * Creates a deep copy of the current element, this is to achieve immutability.
      *
      * @return The clone of the IChildElement
      */
     T deepCopy();
 
-    /**
-     * Returns the unique id.
-     */
-    Id getId();
 }

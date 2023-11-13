@@ -51,6 +51,12 @@ public class Student extends TaskListManager implements IChildElement<Student> {
 
     /**
      * Constructs a new Student without task list.
+     *
+     * @param name    - The group name
+     * @param email   - The email of the student
+     * @param phone   - Student's Phone number
+     * @param address - Students address
+     * @param id      - Unique identifier of the group
      */
     public Student(Name name, Email email, Phone phone, Address address, StudentId id) {
         super();
@@ -63,7 +69,9 @@ public class Student extends TaskListManager implements IChildElement<Student> {
     }
 
     /**
-     * Construcst a new {@code Student} with the data in {@code toBeCopied}.
+     * Constructs a new instance with the data in toBeCopied.
+     *
+     * @param toBeCopied - Data retrieved from storage
      */
     public Student(Student toBeCopied) {
         super(toBeCopied);
@@ -74,22 +82,37 @@ public class Student extends TaskListManager implements IChildElement<Student> {
         this.id = toBeCopied.id;
     }
 
+    /**
+     * Returns the student's name
+     */
     public Name getName() {
         return name;
     }
 
+    /**
+     * Returns the student's id
+     */
     public StudentId getId() {
         return id;
     }
 
+    /**
+     * Returns the student's email
+     */
     public Email getEmail() {
         return email;
     }
 
+    /**
+     * Returns the student's phone number
+     */
     public Phone getPhone() {
         return phone;
     }
 
+    /**
+     * Returns the student's address
+     */
     public Address getAddress() {
         return address;
     }
@@ -99,13 +122,13 @@ public class Student extends TaskListManager implements IChildElement<Student> {
         return new StudentCard(this, displayedIndex);
     }
 
-
     @Override
     public Student deepCopy() {
         return new Student(this);
     }
 
-    @Override public int compareTo(Student other) {
+    @Override
+    public int compareTo(Student other) {
         if (this.id.toString().compareTo(other.id.toString()) != 0) {
             return this.id.toString().compareTo(other.id.toString());
         } else {

@@ -2,6 +2,7 @@ package seedu.address.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -147,14 +148,12 @@ public class ChildOperationTest {
     public void equals_sameChildOperations_returnsTrue() {
         ChildOperation<Student> opr = model.groupChildOperation(grpPath);
         ChildOperation<Student> opr2 = model.groupChildOperation(grpPath);
-        assertTrue(opr.equals(opr2));
+        assertEquals(opr, opr2);
     }
 
     @Test
     public void equals_nullChildOperations_returnsTrue() {
         ChildOperation<Student> opr = model.groupChildOperation(grpPath);
-        assertFalse(opr.equals(null));
+        assertNotNull(opr);
     }
-
-
 }

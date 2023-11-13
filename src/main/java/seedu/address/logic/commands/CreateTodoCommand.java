@@ -74,7 +74,7 @@ public class CreateTodoCommand extends Command {
 
     public static final CreateTodoCommand HELP_MESSAGE = new CreateTodoCommand() {
         @Override
-        public CommandResult execute(Model model) throws CommandException {
+        public CommandResult execute(Model model) {
             return new CommandResult(MESSAGE_USAGE);
         }
     };
@@ -185,15 +185,12 @@ public class CreateTodoCommand extends Command {
         ChildOperation<Student> groupOper = model.groupChildOperation(path);
 
         // Check whether all children already have the task
-        if (groupOper.checkIfAllChildrenHaveTask(todo, 1)) {
+        if (groupOper.doAllChildrenHaveTasks(todo, 1)) {
             throw new CommandException(String.format(MESSAGE_ALL_CHILDREN_HAVE_TASK, "student"));
         }
 
         // Check whether at least one of the children has the task
-        boolean warning = false;
-        if (groupOper.checkIfAnyChildHasTask(todo, 1)) {
-            warning = true;
-        }
+        boolean warning = groupOper.doAnyChildrenHaveTasks(todo, 1);
 
         groupOper.addTaskToAllChildren(todo, 1);
         model.updateList();
@@ -212,15 +209,12 @@ public class CreateTodoCommand extends Command {
         ChildOperation<Group> operation = model.rootChildOperation();
 
         // Check whether all children already have the task
-        if (operation.checkIfAllChildrenHaveTask(todo, 2)) {
+        if (operation.doAllChildrenHaveTasks(todo, 2)) {
             throw new CommandException(String.format(MESSAGE_ALL_CHILDREN_HAVE_TASK, "student"));
         }
 
         // Check whether at least one of the children has the task
-        boolean warning = false;
-        if (operation.checkIfAnyChildHasTask(todo, 2)) {
-            warning = true;
-        }
+        boolean warning = operation.doAnyChildrenHaveTasks(todo, 2);
 
         operation.addTaskToAllChildren(todo, 2);
         model.updateList();
@@ -253,15 +247,12 @@ public class CreateTodoCommand extends Command {
         ChildOperation<Group> rootOper = model.rootChildOperation();
 
         // Check whether all children already have the task
-        if (rootOper.checkIfAllChildrenHaveTask(todo, 1)) {
+        if (rootOper.doAllChildrenHaveTasks(todo, 1)) {
             throw new CommandException(String.format(MESSAGE_ALL_CHILDREN_HAVE_TASK, "group"));
         }
 
         // Check whether at least one of the children has the task
-        boolean warning = false;
-        if (rootOper.checkIfAnyChildHasTask(todo, 1)) {
-            warning = true;
-        }
+        boolean warning = rootOper.doAnyChildrenHaveTasks(todo, 1);
 
         rootOper.addTaskToAllChildren(todo, 1);
         model.updateList();

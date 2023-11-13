@@ -1,12 +1,18 @@
 package seedu.address.model.field;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 import seedu.address.commons.util.CollectionUtil;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.id.GroupId;
+import seedu.address.model.id.Id;
+import seedu.address.model.profbook.Group;
 import seedu.address.model.profbook.Name;
+import seedu.address.model.profbook.Student;
+import seedu.address.model.task.ReadOnlyTaskList;
+import seedu.address.model.task.TaskListManager;
 
 /**
  * Represents the descriptor for editing the details of a group in ProfBook. The descriptor contains fields for
@@ -14,7 +20,7 @@ import seedu.address.model.profbook.Name;
  * An instance of this class is used within the {@code EditCommand} to specify the details to be edited.
  */
 
-public class EditGroupDescriptor {
+public class EditGroupDescriptor implements EditDescriptor<Group> {
     private Name name;
 
     private GroupId id;
@@ -30,9 +36,7 @@ public class EditGroupDescriptor {
         setId(toCopy.id);
     }
 
-    /**
-     * Returns true if at least one field is edited.
-     */
+    @Override
     public boolean isAnyFieldEdited() {
         return CollectionUtil.isAnyNonNull(name, id);
     }
@@ -71,6 +75,16 @@ public class EditGroupDescriptor {
      */
     public Optional<GroupId> getId() {
         return Optional.ofNullable(id);
+    }
+
+    @Override
+    public Group applyEditsToOld(Group old) {
+        assert old != null;
+        Name updatedName = getName().orElse(old.getName());
+        GroupId updatedId = getId().orElse(old.getId());
+        ReadOnlyTaskList taskList = new TaskListManager(old.getAllTasks());
+        Map<Id, Student> students = old.getChildren();
+        return new Group(taskList, students, updatedName, updatedId);
     }
 
     /**

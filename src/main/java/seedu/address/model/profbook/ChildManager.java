@@ -5,7 +5,6 @@ import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -19,48 +18,54 @@ import seedu.address.model.profbook.exceptions.NoSuchChildException;
  *
  * @param <T> to represent the children type, as of v1.2 only student and group
  */
-public class ChildrenManager<T extends IChildElement<T>> implements IChildrenManager<T> {
+public class ChildManager<T extends IChildElement<T>> implements IChildManager<T> {
+
     /**
      * Maps the id to the children
      */
     private final Map<Id, T> children;
 
     /**
-     * Construct a children manager with given task list and children map.
+     * Constructs a children manager with given task list and children map.
+     *
+     * @param children - The map of the directory's current child
      */
-    public ChildrenManager(Map<Id, T> children) {
+    public ChildManager(Map<Id, T> children) {
         requireAllNonNull(children);
         Map<Id, T> tempMap = new HashMap<>();
         Id key;
-        Iterator<Id> it = children.keySet().iterator();
-        while (it.hasNext()) {
-            key = it.next();
+        for (Id id : children.keySet()) {
+            key = id;
             tempMap.put(key, children.get(key).deepCopy());
         }
         this.children = tempMap;
     }
 
     /**
-     * Construct a new children manager.
+     * Constructs a new children manager.
      */
-    public ChildrenManager() {
+    public ChildManager() {
         children = new HashMap<>();
     }
 
     /**
-     * Constructs a {@code ChildrenManager} with the data in {@code toBeCopied}.
-     * @param toBeCopied
+     * Constructs a {@code ChildManager} with the data in {@code toBeCopied}.
+     *
+     * @param toBeCopied - Data extracted from storage
      */
-    public ChildrenManager(ChildrenManager<T> toBeCopied) {
+    public ChildManager(ChildManager<T> toBeCopied) {
         this(toBeCopied.children);
     }
 
     @Override
     public void addChild(Id id, T child) throws DuplicateChildException {
         T currChild = this.children.get(id);
+
+        // Defensive programming
         if (currChild != null) {
             throw new DuplicateChildException(id.toString());
         }
+
         this.children.put(id, child);
     }
 
@@ -79,6 +84,7 @@ public class ChildrenManager<T extends IChildElement<T>> implements IChildrenMan
     @Override
     public T getChild(Id id) throws NoSuchChildException {
         T child = this.children.get(id);
+        // Defensive programming
         if (child == null) {
             throw new NoSuchChildException(id.toString());
         }
@@ -93,7 +99,7 @@ public class ChildrenManager<T extends IChildElement<T>> implements IChildrenMan
     @Override
     public List<T> getAllChildren() {
         List<T> childrenList = new ArrayList<>(this.children.values());
-        Collections.sort(childrenList);
+        Collections.sort(childrenList); // Important to sort as Map stores them randomly
         return childrenList;
     }
 
@@ -117,11 +123,11 @@ public class ChildrenManager<T extends IChildElement<T>> implements IChildrenMan
         }
 
         // instanceof handles nulls
-        if (!(other instanceof ChildrenManager<?>)) {
+        if (!(other instanceof ChildManager<?>)) {
             return false;
         }
 
-        ChildrenManager<?> otherChildrenManger = (ChildrenManager<?>) other;
+        ChildManager<?> otherChildrenManger = (ChildManager<?>) other;
         return this.children.equals(otherChildrenManger.children);
     }
 }

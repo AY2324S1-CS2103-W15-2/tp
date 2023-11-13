@@ -211,10 +211,10 @@ The diagram above shows how the folder structure is implemented in ProfBook,
 
 * The hierarchy is as such: `Root` -> `Group` -> `Student`.
 * As many of the operations are repeated (e.g. tasks operations and children operations), we decided to abstract out
-  these logic into their own classes which is represented by `TaskListManager` and `ChildrenManager` respectively.
-* `ChildrenManager` manages the children which is of type `IChildElement`.
+  these logic into their own classes which is represented by `TaskListManager` and `ChildManager` respectively.
+* `ChildManager` manages the children which is of type `IChildElement`.
 * We also created a wrapper class (e.g. `ChildrenAndTaskListManager`) for classes that require both of those
-  aforementioned functionalities (e.g, `Group` and potentially in the future `TutorialSlot`).
+  aforementioned functionalities (e.g. `Group` and potentially in the future `TutorialSlot`).
 
 <div style="page-break-after: always;"></div>
 
@@ -323,12 +323,15 @@ In our current hierarchy, `Root` -> `Group` -> `Student`, `Student` and `Group` 
 whereas `Root` and `Group` are required to manage children. The `Model` component briefly mentioned this implementation,
 but I will delve into it more comprehensively in this implementation.
 
-We first created interfaces to represent the required logic for each of the manager, namely `IChildrenManager`
-and `ITaskListManager`. Then we created concrete classes such as `ChildrenManager` and `TaskListManager` to encapsulate
+We first created interfaces to represent the required logic for each of the manager, namely `IChildManager`
+and `ITaskListManager`. Then we created concrete classes such as `ChildManager` and `TaskListManager` to encapsulate
 the aforementioned logic. The purpose of these classes was so that should a folder type, e.g. `Student`, require a
 manager functionality, we could just extend from said manager thus reducing on repeated code. Due to the limitation of
 Java, classes are not able to extend from multiple classes. To remedy this, we created a wrapper
 class, `ChildrenAndTaskListManager`.
+
+It is important to note that `ChildManager` is a generic class that accepts classes that implements
+the `IChildElement` interface. This was done to reduce repeated code while introducing a degree of polymorphism.
 
 In our implementation, only the parents have reference to the child. This reference is stored by using
 a `Map<Id, Student>` and `Map<Id, Group>` instance.
@@ -443,9 +446,9 @@ Below is an activity diagram showing the general activity of the add student com
 #### Implementation
 
 Creating and adding a task is one of the key feature of ProfBook. Currently, we support two types of tasks,
-namely `ToDo` and `Deadline` tasks. Both this tasks extends from the abstract `Task` class which add to its
-extensibility. It is important to note that currently, you can only add tasks to Group and Students. Needless to say,
-the information for these tasks are encapsulated withing their respective `Task`
+namely `ToDo` and `Deadline` tasks. Both these tasks extends from the abstract `Task` class which add to its
+extensibility. It is important to note that currently, you can only add tasks to Groups and Students. Needless to say,
+the information for these tasks are encapsulated within their respective `Task`
 instance.
 
 As the implementation for creating a `ToDo` and `Deadline` task is very similar, I would be bringing you through
@@ -529,7 +532,7 @@ This is an activity diagram showing the general activity of the add deadline com
 
 * **Alternative 1:** Add Tasks one by one to each student.
     * Pros: Quick and easy to implement.
-    * Cons: keeping track of group tasks is a hassle, any action done for one task must be done for all.
+    * Cons: Keeping track of group tasks is a hassle, any action done for one task must be done for all.
 * **Alternative 2**: Allow groups to have their own task lists.
     * Pros: Quick and easy to implement.
     * Cons: Adding of student tasks must be done manually.
@@ -575,7 +578,7 @@ The following methods of `ModelManager`, `AbsolutePath` and `ChildOperation<Grou
 4. `AbsolutePath::isGroupDirectory` - To check if the path leads to a group directory.
 5. `AbsolutePath::isStudentDirectory` - To check if the path leads to a student directory.
 
-Given below is an example usage scenario on how an existing user can edit the name of a group
+Given below is an example usage scenario on how an existing user can edit the name of a group.
 
 1. When the user launches the application, existing information is read from the data file `profbook.json`. The initial
    state should look something like this.
@@ -592,7 +595,7 @@ Given below is an example usage scenario on how an existing user can edit the na
 
    <puml src="diagrams/EditIntermediateState.puml" width="600" />
 
-7. It then deletes the old key-value pair in root's `Map<id, group>` and adds the new key-value pair.
+7. It then deletes the old key-value pair in root's `Map<Id, group>` and adds the new key-value pair.
 
    <puml src="diagrams/EditFinalState.puml" width="600" />
 
@@ -654,7 +657,7 @@ Given below is an example usage scenario whereby a student is moved from group1 
 
 ### Editing tasks
 
-Currently, the only way to edit tasks is by manually deleting and then adding it again. This creates extra hassle for
+Currently, the only way to edit tasks is by manually deleting and then adding them again. This creates extra hassle for
 the user and possible more inconveniences as doing so might change the task's index resulting in the user having
 to `cat` again to figure out its new index. We plan to edit the task manually for the user by creating a new command
 that deletes and then creates a new task with the edited information while keeping the index the same. Implementing this
@@ -667,6 +670,14 @@ lacking as users are able to enter a `123` as a phone number or a phone number t
 improve this validation by enforcing a tighter validation. This can be achieved by creating a `Map<String, Integer>` of
 common phone extensions to their length and then enforcing that the phone number be of that length. This allows our
 users to have the peace of mind that the phone number is validated and robust enough to handle international numbers.
+
+### Max character length validation
+
+Currently, our application only checks if the required fields (e.g. `--name`, `--desc`) is present. Our current validation is
+lacking as users are able to enter a value that is infinitely long which may hinder the performance and functionality of
+our GUI. We plan to counteract this by enforcing a max character length for each of our field. Implementing this is
+would be rather simple by adding a length check during parsing. We could limit name length to 46 characters, email to 62 
+etc. 
 
 ### Better marking and un-marking validation
 
@@ -688,7 +699,7 @@ plan to revamp our duplication checking for students by checking for equality be
 Currently, while our application tries to output a descriptive and apt message for each error, we have received feedback
 that some of our error message could be more descriptive. One such example is trying to edit the root `~/` directory or
 trying to edit a directory that does not exist. In both cases, the error message given
-is `Path does not exist in ProfBook.`. In this example, we could have mention that you are unable to edit the root
+is `Path does not exist in ProfBook`. In this example, we could have mention that you are unable to edit the root
 directory for the prior and that the Path does not lead to a student/group for the latter. This is just one example, we
 plan to revamp our error message to be more descriptive and user-friendly.
 
@@ -698,6 +709,21 @@ Currently, our hierarchy only extends to `Group`. To serve our target users bett
 `TutorialSlot` to ProfBook. This would allow our target users to juggle not only groups but also tutorial slots.
 Implementing this is rather easy as `TutorialSlot` would in theory be almost identical to the implementation of `Group`,
 all `TutorialSlot` have to do is just extend from `ChildrenAndTaskListManager`. 
+
+
+### Implement a grade component to our tasks
+
+Currently, our users can only mark tasks as completed. To serve our target users better, we plan to allow our users to 
+assign a grade or score to a task. This would allow our target users to better keep track of and monitor their students
+and their groups progress. Implementing this would be adding a new `tag` to our display for tasks and creating a new 
+command similar to that of mark that receives and store the grade or score.
+
+### Implement a search function
+
+Currently, our users are unable to filter the current displayed list. We predict that this could be a hassle if the user
+is required to manage many groups and students with each having a myriad of tasks. We plan to implement this by creating 
+a new command where users would be able to pass in the field that they wish to search by. Then, we can filter the
+display list with a simple for-loop.
 
 <div style="page-break-after: always;"></div>
 
@@ -737,28 +763,28 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 | Priority level | As a …​          | I want to …​                                                                                                  | So that I can…​                                                               |
 |----------------|------------------|---------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
-| `* * *`        | new user         | see usage instructions                                                                                        | refer to instructions when I forget how to use the App                        |
-| `* * *`        | new user         | take advantage of existing Linux skills                                                                       | be more efficient in using the application                                    |
-| `* * *`        | new user         | create deadlines for student                                                                                  | keep track of when assignments are due                                        |
-| `* * *`        | new user         | create todo task for student                                                                                  | keep track of which label they are at                                         |
-| `* * *`        | new user         | create deadline for a group                                                                                   | keep track of when group specific assignments are due                         |
-| `* * *`        | new user         | create todo for a group                                                                                       | keep track of the progress of each group relative to others                   |
-| `* * *`        | new user         | create deadline for a tutorial group                                                                          | keep track of when tutorial specific assignments are due                      |
-| `* * *`        | new user         | create todo tasks for a tutorial group                                                                        | keep track of the progress of each tutorial group relative to others          |
-| `* * *`        | new user         | add time to a task                                                                                            | i can record when a task needs to be done                                     |
-| `* * *`        | new user         | set alerts and notification                                                                                   | I can receive the notifications of the task                                   |
-| `* * *`        | new user         | see the pending task that has the next earliest deadline                                                      | i can know what do do next                                                    |
-| `* * *`        | new user         | add the profile picture of students                                                                           | I can better remember them                                                    |
-| `* * *`        | new user         | add the matriculation number of students                                                                      | I can update their grade based on the matriculation number                    |
-| `* * *`        | new user         | create student profile                                                                                        | manage information of a specific student                                      |
-| `* * *`        | new user         | create group                                                                                                  | manage information of a specific group                                        |
-| `* * *`        | new user         | create tutorial slot                                                                                          | manage information fo a specific tutorial slot                                |
-| `* * *`        | new user         | delete a student                                                                                              | remove students that I no longer need                                         |
-| `* * *`        | Experienced user | search for a student/tutorial group by name                                                                   | pull up students/tutorial groups without having to go through the entire list |
+| `* * *`        | New user         | see usage instructions                                                                                        | refer to instructions when I forget how to use the App                        |
+| `* * *`        | New user         | take advantage of existing Linux skills                                                                       | be more efficient in using the application                                    |
+| `* * *`        | New user         | create deadlines for student                                                                                  | keep track of when assignments are due                                        |
+| `* * *`        | New user         | create todo task for student                                                                                  | keep track of which label they are at                                         |
+| `* * *`        | New user         | create deadline for a group                                                                                   | keep track of when group specific assignments are due                         |
+| `* * *`        | New user         | create todo for a group                                                                                       | keep track of the progress of each group relative to others                   |
+| `* * *`        | New user         | add time to a task                                                                                            | i can record when a task needs to be done                                     |
+| `* * *`        | New user         | set alerts and notification                                                                                   | I can receive the notifications of the task                                   |
+| `* * *`        | New user         | add the profile picture of students                                                                           | I can better remember them                                                    |
+| `* * *`        | New user         | add the matriculation number of students                                                                      | I can update their grade based on the matriculation number                    |
+| `* * *`        | New user         | create student profile                                                                                        | manage information of a specific student                                      |
+| `* * *`        | New user         | delete a student                                                                                              | remove students that I no longer need                                         |
+| `* * *`        | New user         | create group                                                                                                  | manage information of a specific group                                        |
 | `* * *`        | Experienced user | mark task done for every student in a group                                                                   | I do not need to mark each task manually                                      |
 | `* * *`        | Experienced user | add tasks for every student in the book                                                                       | I do not need to add tasks manually                                           |
-| `* * *`        | Experienced user | add tasks for every student in a tutorial group                                                               | I do not need to add tasks manually                                           |
 | `* * *`        | Experienced user | add tasks for every student in a group                                                                        | I do not need to add tasks manually                                           |
+| `* * `         | New user         | create tutorial slot                                                                                          | manage information fo a specific tutorial slot                                |
+| `* * `         | New user         | create deadline for a tutorial group                                                                          | keep track of when tutorial specific assignments are due                      |
+| `* * `         | New user         | create todo tasks for a tutorial group                                                                        | keep track of the progress of each tutorial group relative to others          |
+| `* * `         | New user         | see the pending task that has the next earliest deadline                                                      | i can know what do do next                                                    |
+| `* * `         | Experienced user | add tasks for every student in a tutorial group                                                               | I do not need to add tasks manually                                           |
+| `* * `         | Experienced user | search for a student/tutorial group by name                                                                   | pull up students/tutorial groups without having to go through the entire list |
 | `* * `         | Experienced user | be able to see an brief overview of last week                                                                 | Can see deadlines that have passed etc                                        |
 | `* * `         | Experienced user | easily edit the student/tutorial groups                                                                       | Information is applicable throughout time                                     |
 | `* * `         | Experienced user | move students around, edit which group they are in                                                            | I can be flexible with the groupings                                          |
@@ -847,7 +873,7 @@ otherwise)
 
       Use case resumes at step 1.
 
-* 1b. Command has no arguments.
+* 1b. No path provided.
 
     * 1b1. ProfBook shows list of children under current directory.
 
@@ -961,9 +987,15 @@ otherwise)
 
       Use case resumes at step 1.
 
-* 1b. The parameter to be changed is invalid.
+* 1b. No path provided, user is in group directory.
 
-    * 1b1. ProfBook shows an error message.
+    * 1b1. ProfBook edits the groups details.
+
+      Use case ends.
+
+* 1c. The parameter to be changed is invalid.
+
+    * 1c1. ProfBook shows an error message.
 
       Use case resumes at step 1.
 
@@ -989,20 +1021,20 @@ otherwise)
 
 **MSS**
 
-1. User requests to delete a task with specific id.
+1. User requests to delete a task with task index.
 2. ProfBook deletes the task.
 
    Use case ends.
 
 **Extensions**
 
-* 1a. User inputs command while not in tasklist display using `cat`
+* 1a. User inputs command while not in tasklist display.
 
     * 1a1. ProfBook shows an error message.
 
       Use case resumes at step 1.
 
-* 1b. The given id is invalid.
+* 1b. The given index is invalid.
 
     * 1b1. ProfBook shows an error message.
 
@@ -1048,7 +1080,7 @@ otherwise)
 
       Use case resumes at step 1.
 
-* 1b. The given path is a duplicate of an existing one.
+* 1b. The given group id is a duplicate of an existing one.
 
     * 1b1. ProfBook shows an error message.
 
@@ -1097,7 +1129,7 @@ otherwise)
 
 * 1e. User specifies `--all allStu` or `--all allGrp`.
 
-    * 1e1. ProfBook creates Deadline for either all students within the group, or all groups within ProfBook.
+    * 1e1. ProfBook creates Todo for either all students within the group or all groups or students within ProfBook.
 
       Use case ends.
 
@@ -1144,7 +1176,7 @@ otherwise)
 
 * 1f. User specifies `--all allStu` or `--all allGrp`.
 
-    * 1f1. ProfBook creates Deadline for either all students within the group, or all groups within ProfBook.
+    * 1f1. ProfBook creates Deadline for either all students within the group or all groups or students within ProfBook.
 
       Use case ends.
 
@@ -1159,7 +1191,7 @@ otherwise)
 
 **Extensions**
 
-* 1a. User inputs command while not in tasklist display using `cat`
+* 1a. User inputs command while not in tasklist display.
     * 1a1. ProfBook shows an error message.
 
       Use case resumes at step 1.
@@ -1180,7 +1212,7 @@ otherwise)
 
 **Extensions**
 
-* 1a. User inputs command while not in tasklist display using `cat`
+* 1a. User inputs command while not in tasklist display.
     * 1a1. ProfBook shows an error message.
 
       Use case resumes at step 1.
@@ -1201,7 +1233,7 @@ otherwise)
 
 **Extensions**
 
-* 1a. User inputs command while not in tasklist display using `cat`
+* 1a. User inputs command while not in tasklist display.
     * 1a1. ProfBook shows an error message.
 
       Use case resumes at step 1.
@@ -1277,9 +1309,9 @@ testers are expected to do more *exploratory* testing.
 <box type = "warning">
 
 **Important:** For simplicity, all the command given below are based on the assumption that you are currently at the 
-root directory `~/>`. Should you change your directory to something other thant root do take note that our commands may 
+root directory `~/>`. Should you change your directory to something other than root do take note that our commands may 
 need to change according to your current directory. More information can be found in our
-[user guide](https://ay2324s1-cs2103t-w15-2.github.io/tp/UserGuide.html)
+[user guide](https://ay2324s1-cs2103t-w15-2.github.io/tp/UserGuide.html).
 
 </box>
 
@@ -1402,7 +1434,7 @@ need to change according to your current directory. More information can be foun
 - Creates todo task for all groups or all students in a group,
 
     - Prerequisites: There exist at least one group in ProfBook and at least one of the groups does not have the todo task, Assignment 1.<br>
-      Test case: `todo ~ --desc Assignment 1 --all allGrp`<br>
+      Test case: `todo --desc Assignment 1 --all allGrp`<br>
       Expected: The todo task `Assignment 1` will be allocated to all groups that does not already have the todo task.
 
     - Prerequisites: There exist a group with GroupId `grp-001` with at least one student.<br>
@@ -1410,7 +1442,7 @@ need to change according to your current directory. More information can be foun
       Test case: `todo ~/grp-001 --desc Assignment 1 --all allStu`<br>
       Expected: The todo task `Assignment 1` will be allocated all students in `grp-001` that does not already have the todo task.
 
-    - Prerequisites: There exist at least one student in ProfBook and at least of the students does not have the todo task, Assignment 1.<br>
+    - Prerequisites: There exist at least one student in ProfBook and at least one of the students does not have the todo task, Assignment 1.<br>
       Test case: `todo --desc Assignment 1 --all allStu`<br>
       Expected: The todo task `Assignment 1` will be allocated to all students under root directory that does not already have the todo task.
 
@@ -1443,13 +1475,13 @@ need to change according to your current directory. More information can be foun
       Expected: An error message indicating the datetime format is invalid will be displayed.
 
     - Prerequisites: There exist a group with GroupId `grp-001` with the same deadline task Assignment 1 already assigned to it.<br>
-      Test case: `deadline ~/grp-001 --desc Assignment 1 --datetime 11-11-2023 23:59`<br>
+      Test case: `deadline ~/grp-001 --desc Assignment 1 --datetime 2023-10-11 23:59`<br>
       Expected: An error message indicating that Assignment 1 has already been allocated to it.
 
 - Creates deadline task for all groups or all students in a group,
 
     - Prerequisites: There exist at least one group in ProfBook and at least one of the groups does not have the deadline task, Assignment 1.<br>
-      Test case: `deadline ~ --desc Assignment 1 --datetime 2023-10-11 23:59 --all allGrp`<br>
+      Test case: `deadline --desc Assignment 1 --datetime 2023-10-11 23:59 --all allGrp`<br>
       Expected: The deadline task `Assignment 1` will be allocated to all groups that does not already have the task.
 
     - Prerequisites: There exist a group with GroupId `grp-001` with at least one student.<br>
@@ -1457,7 +1489,7 @@ need to change according to your current directory. More information can be foun
       Test case: `deadline ~/grp-001 --desc Assignment 1 --datetime 2023-10-11 23:59 --all allStu`<br>
       Expected: The deadline task `Assignment 1` will be allocated all students in `grp-001` that does not already have the task.
 
-    - Prerequisites: There exist at least one student in ProfBook and at least of the students does not have the deadline task, Assignment 1.<br>
+    - Prerequisites: There exist at least one student in ProfBook and at least one of the students does not have the deadline task, Assignment 1.<br>
       Test case: `deadline --desc Assignment 1 --datetime 2023-10-11 23:59 --all allStu`<br>
       Expected: The deadline task `Assignment 1` will be allocated to all students under root directory that does not already have the task.
 
@@ -1490,12 +1522,12 @@ need to change according to your current directory. More information can be foun
     - Test case: `mark a`<br>
       Expected: No task would be marked, an error will be shown.
 
-    - Other incorrect `mark` commands to try: `mark -2`, `mark x` (Where x is positive integer which is less than current task size)<br>
+    - Other incorrect `mark` commands to try: `mark \-2`, `mark x` (Where x is positive integer which is greater than current task list size)<br>
       Expected: No task would be marked, an error message indicating that the index given is invalid.
 
 ### Un-mark a completed task
 
-- Un-marks a specified task as done for a student or group
+- Un-marks a specified task for a student or group
 
     - Prerequisites: The display panel is showing the task list of the specified student or group.<br>
       This can be achieved by using the `cat` command alongside the path to the desired student/group to display their task list.
@@ -1510,12 +1542,12 @@ need to change according to your current directory. More information can be foun
     - Test case: `unmark a`<br>
       Expected: No task would be un-marked, an error will be shown.
 
-    - Other incorrect `un-mark` commands to try: `unmark -2`, `unmark x` (Where x is positive integer which is less than current task size)<br>
+    - Other incorrect `unmark` commands to try: `unmark \-2`, `unmark x` (Where x is positive integer which is greater than current task list size)<br>
       Expected: No task would be marked, an error message indicating that the index given is invalid.
 
 ### Delete a task
 
-- Deletes a specified task as done for a student or group,
+- Deletes a specified task for a student or group,
 
     - Prerequisites: The display panel is showing the task list of the specified student or group.<br>
       This can be achieved by using the `cat` command alongside the path to the desired student/group to display their task list.
@@ -1530,7 +1562,7 @@ need to change according to your current directory. More information can be foun
     - Test case: `rmt a`<br>
       Expected: No task would be deleted, an error will be shown.
 
-    - Other incorrect `rmt` commands to try: `rmt -2`, `rmt x` (Where x is positive integer which is less than current task size)<br>
+    - Other incorrect `rmt` commands to try: `rmt \-2`, `rmt x` (Where x is positive integer which is greater than current task list size)<br>
       Expected: No task would be deleted, an error message indicating that the index given is invalid.
 
 ### UI
@@ -1591,19 +1623,20 @@ need to change according to your current directory. More information can be foun
 - Getting the default save file.
 
     - Prerequisites: Place ProfBook.jar in an empty home folder. Perform the following step in the root directory.
+    - Prerequisites: There should be a group with id `grp-001`, this `grp-001` should contain a student with id `0001Y`
 
-    - Test case: `todo grp-001/0001Y --desc Assignment One`<br>
-      Expected: `profbook.json` appears in data folder inside home folder. Student with name `Tejas` has a field history in profbook.json whereas the other students do not. Sample output [here](https://github.com/AY2324S1-CS2103T-W15-2/tp/tree/master/docs/sample/addTodo.json).
+    - Test case: `todo grp-001/0001Y --desc Assignment One`.<br>
+      Expected: `profbook.json` appears in data folder inside home folder. Student with id `0001Y` has a new task added which is reflected in `profbook.json`. Sample output [here](https://github.com/AY2324S1-CS2103T-W15-2/tp/tree/master/docs/sample/addTodo.json).
 
-    - Test case: `rm grp-001/0001Y`<br>
-      Expected: `profbook.json` is updated with `Tejas removed`. Sample output [here](https://github.com/AY2324S1-CS2103T-W15-2/tp/tree/master/docs/sample/removeTejas.json).
+    - Test case: `rm grp-001/0001Y`.<br>
+      Expected: `profbook.json` is updated with the removal of student `0001Y`. Sample output [here](https://github.com/AY2324S1-CS2103T-W15-2/tp/tree/master/docs/sample/removeStudent.json).
 
 - Clearing the save file.
 
     - Prerequisites: Have `profbook.json` in the data folder. Perform the previous step if the file isn’t there.
 
     - Test case: `clear`<br>
-      Expected: An empty `profbook.json` file like [here](https://github.com/AY2324S1-CS2103T-W15-2/tp/tree/master/docs/sample/empty.json)).
+      Expected: An empty `profbook.json` file like [here](https://github.com/AY2324S1-CS2103T-W15-2/tp/tree/master/docs/sample/empty.json).
 
 <div style="page-break-after: always;"></div>
 
@@ -1664,7 +1697,7 @@ in the overall effort.
 **relative** paths. This package played a crucial role in managing navigation and executing dynamic commands within
   our application.
 
-- **ChildrenManager Class:** The class was instrumental in representing the hierarchical structure in our
+- **ChildManager Component:** The class was instrumental in representing the hierarchical structure in our
   application. We successfully leveraged this class to perform operations related to child entities, optimizing the
   handling of students within groups and groups within the ProfBook.
 

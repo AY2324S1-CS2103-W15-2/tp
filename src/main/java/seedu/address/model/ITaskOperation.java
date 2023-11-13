@@ -10,7 +10,19 @@ import seedu.address.model.task.exceptions.NoSuchTaskException;
  * Interface for classes that operations that involve a task list, ensures that all basic functions are present to
  * interact with TaskListManager instance
  */
-public interface ITaskOperations {
+public interface ITaskOperation {
+
+    /**
+     * Adds the tasks to the task list granted it does not result in a duplicate
+     *
+     * @param t The task in question
+     */
+    void addTask(Task t);
+
+    /**
+     * Check if index is between 0 and task list size.
+     */
+    boolean isValidIndex(int index);
 
     /**
      * Checks if current task is present
@@ -20,22 +32,9 @@ public interface ITaskOperations {
     boolean hasTask(Task t);
 
     /**
-     * Check if index is between 0 and task list size.
-     */
-    boolean isValidIndex(int index);
-
-    /**
-     * Return the size of the task list.
+     * Return the current size of the task list.
      */
     int getTaskListSize();
-
-    /**
-     * Adds a new tasks to the task list.
-     * Task must not be duplicated class.
-     *
-     * @param t The task in question
-     */
-    void addTask(Task t);
 
     /**
      * Deletes the task at the specified index

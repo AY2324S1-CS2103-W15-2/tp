@@ -20,7 +20,7 @@ Java, and has about 10 kLoC.
 2. **Introduced `Id` class :**
     - Represent unique id of group and student.
 3. **Introduced `Option` class :**
-    - Similar to AB3 `Prefix` class, but with short-hand and long-hand names.
+    - Similar to AB3 `Prefix` class, but with shorthand and long-hand names.
     - e.g. Name option can be passed using option `--name` or `-n`.
 4. **Introduced `Displayable` interface :**
     - Classes that implement this interface can be displayed in the `ItemListPanel`.
@@ -57,7 +57,7 @@ coming soon
 - Established our team's **organization** and **repo** on GitHub.
 - Set up a **GitHub project** to manage issues related to user stories and tasks.
 - Setup **project website deployment**.
-- Integrated **Netifly** to enable automatic deployments of our PR previews.
+- Integrated **Netlify** to enable automatic deployments of our PR previews.
 - Integrated **Codecov** to automate code coverage assessment of PR.
 - Wrapped up milestone v1.1 and released JAR file.
 - Recorded video for v1.2 demo.

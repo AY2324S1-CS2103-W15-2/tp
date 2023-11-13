@@ -13,7 +13,7 @@ import seedu.address.ui.GroupCard;
 /**
  * Encapsulates logic for a group within a tutorial group
  */
-public class Group extends ChildrenAndTaskListManager<Group, Student> {
+public class Group extends ChildAndTaskListManager<Group, Student> {
 
     /**
      * Name of the group
@@ -24,6 +24,30 @@ public class Group extends ChildrenAndTaskListManager<Group, Student> {
      * Unique identifier of the group
      */
     private final GroupId id;
+
+    /**
+     * Constructs a new {@code Group} without task list and student map.
+     *
+     * @param name - Name of the group
+     * @param id   - Unique id of the group
+     */
+    public Group(Name name, GroupId id) {
+        super();
+        this.name = name;
+        this.id = id;
+    }
+
+
+    /**
+     * Creates a {@code Group} with the data in {@code toBeCopied}.
+     *
+     * @param toBeCopied - Data extracted from storage
+     */
+    public Group(Group toBeCopied) {
+        super(toBeCopied);
+        this.name = toBeCopied.name;
+        this.id = toBeCopied.id;
+    }
 
     /**
      * Constructs a Group instance with all fields.
@@ -41,27 +65,15 @@ public class Group extends ChildrenAndTaskListManager<Group, Student> {
     }
 
     /**
-     * Constructs a new {@code Group} without task list and student map.
+     * Returns the group's id
      */
-    public Group(Name name, GroupId id) {
-        super();
-        this.name = name;
-        this.id = id;
-    }
-
-    /**
-     * Create a {@code Group} with the data in {@code toBeCopied}.
-     */
-    public Group(Group toBeCopied) {
-        super(toBeCopied);
-        this.name = toBeCopied.name;
-        this.id = toBeCopied.id;
-    }
-
     public GroupId getId() {
         return id;
     }
 
+    /**
+     * Returns the group's name
+     */
     public Name getName() {
         return name;
     }
@@ -85,7 +97,8 @@ public class Group extends ChildrenAndTaskListManager<Group, Student> {
                 .toString();
     }
 
-    @Override public int compareTo(Group other) {
+    @Override
+    public int compareTo(Group other) {
         if (this.id.toString().compareTo(other.id.toString()) != 0) {
             return this.id.toString().compareTo(other.id.toString());
         } else {

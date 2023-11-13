@@ -8,7 +8,6 @@ import static java.util.Objects.requireNonNull;
  */
 public class Phone {
 
-
     public static final String MESSAGE_CONSTRAINTS =
             "Phone numbers should only contain numbers, and it should be at least 3 digits long";
     public static final Phone PLACEHOLDER = new Phone("n/a");
@@ -16,7 +15,7 @@ public class Phone {
     public final String value;
 
     /**
-     * Constructs a {@code Phone}.
+     * Constructs a Phone instance
      *
      * @param phone A valid phone number.
      */
